@@ -311,8 +311,6 @@ void sfcGamePlay() {
       sfcWinner = true;
       // Save High Score here
       EEPROM.put(eepromlocation, sfcHighScore);
-	  Serial.println(eepromlocation);
-	  Serial.println(sfcHighScore);;
 	}
     sfcPaintScreen();
     delay(500); // little pause to relax and stop button mashing
@@ -335,7 +333,6 @@ void setup() {
   delay(2000);
   ab.clear();
   sfcWallsInit();
-  Serial.begin(9600);
 }
 
 void loop() {
