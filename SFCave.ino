@@ -99,8 +99,8 @@ PROGMEM const unsigned char splash[] = {
 };
 
 
-unsigned int sfcScore = 0;
-unsigned int sfcHighScore = 0;
+uint16_t sfcScore = 0; // Highest score is 65,535 points
+uint16_t sfcHighScore = 0; // High score range limited to 200 - 9,999
 char sfcWalls[32][2];
 char sfcRibbon[16];
 char sfcTrend = 0;
@@ -108,7 +108,7 @@ char sfcVelocity = 0;
 char sfcWidth = 0;
 char sfcMode = 0;
 boolean sfcWinner = false;
-int eepromlocation = EEPROM_STORAGE_SPACE_START;
+uint16_t eepromlocation = EEPROM_STORAGE_SPACE_START + 435;
 
 
 void sfcDrawPixel(int x, int y, boolean n) {
@@ -326,6 +326,12 @@ void setup() {
   ab.begin();
   ab.clear();
   EEPROM.get(eepromlocation, sfcHighScore);
+  // Sanitize high score to reasonable values
+  if (sfcHighScore < 200 || sfcHighScore > 9999 ) {
+    // Set greater than zero to give the player some challenge!
+    sfcHighScore = 200;
+    // Preserve EEPROM, only updating when the Player achieves a high score. 
+  }
   ab.drawBitmap(0, 0, splash, 128, 64, WHITE);
   ab.display();
   ab.setTextWrap(false);
@@ -360,9 +366,7 @@ void loop() {
 	  ab.println("Resetting High Score");
 	  ab.display();
 	  delay(1000);
-	  for (int x = 0; x <= 5; x++) {
-		  EEPROM.put(eepromlocation + x, (unsigned int)0);
-	  }
+	  EEPROM.put(eepromlocation, (uint16_t)0);
 	  sfcHighScore = 0;
 	  ab.println("Done!");
 	  ab.display();
